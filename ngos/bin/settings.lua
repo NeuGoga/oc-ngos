@@ -6,7 +6,7 @@ local gpu = component.gpu
 local w, h = gpu.getResolution()
 
 local sec = dofile("/ngos/system/security.lua")
-local themeLib = dofile("/ngos/system/theme.lua")
+local themeLib = _G.ngos.themeLib
 
 local currentStyle = themeLib.currentName or "dark"
 local currentQuality = themeLib.currentQuality or "low"
@@ -110,6 +110,7 @@ function changeTheme(newStyle, newQuality)
     
     currentStyle = themeLib.currentName
     currentQuality = themeLib.currentQuality
+    
     draw()
 end
 

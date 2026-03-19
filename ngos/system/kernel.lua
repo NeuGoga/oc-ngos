@@ -29,7 +29,8 @@ _G.ngos.version = loadOSVersion()
 
 local themeLib = dofile("/ngos/system/theme.lua")
 themeLib.load()
-_G.ngos.theme = themeLib.colors
+_G.ngos.themeLib = themeLib
+_G.ngos.theme = themeLib.colors 
 
 local sec = dofile("/ngos/system/security.lua")
 sec.checkIntegrity()
