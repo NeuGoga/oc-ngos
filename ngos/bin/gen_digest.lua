@@ -1,8 +1,16 @@
-local sha256 = require("ngos.lib.sha256")
+local component = require("component")
+local fs = require("filesystem")
+local serialization = require("serialization")
+local term = require("term")
+
+local gpu = component.gpu
+
+local sha256 = dofile("/ngos/lib/sha256.lua")
+
 local DIGEST_FILE = "/etc/system.digest"
 
 local criticalFiles = {
-    "/startup.lua",
+    "/home/.shrc",
     "/ngos/system/kernel.lua",
     "/ngos/system/security.lua",
     "/ngos/system/theme.lua",
@@ -10,39 +18,44 @@ local criticalFiles = {
     "/ngos/bin/store.lua",
     "/ngos/bin/settings.lua",
     "/ngos/bin/updater.lua",
-    "/ngos/bin/gen_digest.lua"
+    "/ngos/bin/gen_digest.lua",
+    "/ngos/lib/sha256.lua"
 }
 
-term.setBackgroundColor(colors.black)
+gpu.setBackground(0x000000)
 term.clear()
-term.setCursorPos(1,1)
+gpu.setForeground(0xFFFFFF)
+print("NgOS Security Manager")
 print("Generating System Digest...")
+print("============================")
 
 local digest = {}
 
 for _, path in ipairs(criticalFiles) do
-    write("Hashing " .. fs.getName(path) .. "... ")
+    io.write("Hashing " .. fs.name(path) .. "... ")
     
     if fs.exists(path) then
-        local f = fs.open(path, "rb")
-        local content = f.readAll()
-        f.close()
+        local f = io.open(path, "rb")
+        local content = f:read("*a")
+        f:close()
         
         local cleanContent = content:gsub("\r", "")
         digest[path] = sha256.hex(cleanContent)
+        
+        gpu.setForeground(0x00FF00)
         print("OK")
     else
-        term.setTextColor(colors.red)
+        gpu.setForeground(0xFF0000)
         print("MISSING")
-        term.setTextColor(colors.white)
     end
+    gpu.setForeground(0xFFFFFF)
 end
 
-local f = fs.open(DIGEST_FILE, "w")
-f.write(textutils.serializeJSON(digest))
-f.close()
+local f = io.open(DIGEST_FILE, "w")
+f:write(serialization.serialize(digest))
+f:close()
 
-term.setTextColor(colors.lime)
+gpu.setForeground(0x00FF00)
 print("\nDigest saved to " .. DIGEST_FILE)
-term.setTextColor(colors.white)
-sleep(2)
+gpu.setForeground(0xFFFFFF)
+os.sleep(2)
