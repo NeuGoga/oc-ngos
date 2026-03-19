@@ -121,7 +121,7 @@ createLauncher("/apps/Store/app.lua", "/ngos/bin/store.lua")
 createLauncher("/apps/Settings/app.lua", "/ngos/bin/settings.lua")
 
 local autoBoot = io.open("/home/.shrc", "w")
-autoBoot:write('os.execute("/ngos/system/kernel.lua")\n')
+autoBoot:write('/ngos/system/kernel.lua)\n')
 autoBoot:close()
 
 local installerPath = os.getenv("_") or "/install.lua"
