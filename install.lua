@@ -11,13 +11,23 @@ local REPO_BASE = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/"
 local MANIFEST_URL = REPO_BASE .. "os_manifest.tbl"
 
 local function httpGet(url)
-    local success, response = pcall(internet.request, url)
-    if not success or not response then return nil end
+    local req_success, response = pcall(internet.request, url)
+    if not req_success or not response then return nil end
     
     local data = ""
-    for chunk in response do
+    while true do
+        local chunk_success, chunk = pcall(response)
+        
+        if not chunk_success then 
+            return nil
+        end
+        if not chunk then 
+            break
+        end
+        
         data = data .. chunk
     end
+    
     return data
 end
 
