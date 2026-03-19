@@ -115,6 +115,13 @@ end
 
 draw()
 
+local function redrawAll()
+    draw()
+end
+
+redrawAll()
+
+
 while true do
     local eventData = { coroutine.yield() }
     local ev = eventData[1]
@@ -133,5 +140,7 @@ while true do
                 break
             end
         end
+    elseif ev == "refresh" then
+        redrawAll()    
     end
 end

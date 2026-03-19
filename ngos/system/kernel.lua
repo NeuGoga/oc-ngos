@@ -35,21 +35,37 @@ local sec = dofile("/ngos/system/security.lua")
 sec.checkIntegrity()
 sec.bootLogin()
 
-local processes = {} 
+local processes = {}
 local pidCounter = 1
-local activeProcess = nil 
-local isTaskSwitcherOpen = false 
+local activeProcess = nil
+local isTaskSwitcherOpen = false
 local desktopRoutine = nil
 
 local function getAppName(path)
-    return fs.name(path)
+    local parts = {}
+    for part in path:gmatch("[^/]+") do
+        table.insert(parts, part)
+    end
+    
+    local fileName = parts[#parts] or "Unknown"
+    
+    if fileName == "app.lua" and #parts >= 2 then
+        return parts[#parts-1]
+    end
+    
+    return fileName:gsub("%.lua$", "")
 end
 
 local function killProcess(proc)
     for i, p in ipairs(processes) do
-        if p == proc then table.remove(processes, i); break end
+        if p == proc then
+            table.remove(processes, i);
+            break
+        end
     end
-    if activeProcess == proc then activeProcess = nil end
+    if activeProcess == proc then
+        activeProcess = nil
+    end
 end
 
 local function drawOverlay()
@@ -58,8 +74,8 @@ local function drawOverlay()
     if activeProcess then
         gpu.setBackground(T.warn)
         gpu.setForeground(T.black)
-        gpu.set(w-1, 1, "_")
-        
+        gpu.set(w - 1, 1, "_")
+
         gpu.setBackground(T.err)
         gpu.setForeground(T.white)
         gpu.set(w, 1, "X")
@@ -68,32 +84,32 @@ local function drawOverlay()
         gpu.setForeground(T.white)
         gpu.set(w, 1, "^")
     end
-    
+
     if isTaskSwitcherOpen then
         local boxW = 24
         local boxH = #processes + 2
         local startX = math.floor((w - boxW) / 2)
         local startY = math.floor((h - boxH) / 2)
-        
+
         gpu.setBackground(T.header)
         gpu.fill(startX, startY, boxW, boxH, " ")
-        
+
         gpu.setBackground(T.accent)
         gpu.setForeground(T.bg)
         local title = " Running Apps"
         gpu.set(startX, startY, title .. string.rep(" ", boxW - string.len(title) - 1))
-        
+
         gpu.setBackground(T.err)
         gpu.setForeground(T.white)
         gpu.set(startX + boxW - 1, startY, "X")
-        
+
         for i, proc in ipairs(processes) do
             local lineY = startY + i
             gpu.setBackground(T.header)
             gpu.setForeground(T.text)
-            
+
             gpu.set(startX + 1, lineY, getAppName(proc.path))
-            
+
             gpu.setForeground(T.warn)
             gpu.set(startX + boxW - 2, lineY, "x")
         end
@@ -102,17 +118,23 @@ end
 
 local function loadDesktop()
     local path = "/ngos/bin/desktop.lua"
-    if not fs.exists(path) then return nil end
-    
-    local env = setmetatable({ _G = _G }, {__index = _G})
-    
-    local fn, err = loadfile(path, "t", env)
-    
-    if not fn then 
-        gpu.set(1, 20, "Load Error: " .. tostring(err))
-        return nil 
+    if not fs.exists(path) then
+        return nil
     end
-    
+
+    local env = setmetatable({
+        _G = _G
+    }, {
+        __index = _G
+    })
+
+    local fn, err = loadfile(path, "t", env)
+
+    if not fn then
+        gpu.set(1, 20, "Load Error: " .. tostring(err))
+        return nil
+    end
+
     return coroutine.create(fn)
 end
 
@@ -121,17 +143,31 @@ local function launchApp(path)
     pidCounter = pidCounter + 1
 
     local env = setmetatable({
-        _G = _G, require = require,
-        os = os, io = io, table = table, math = math, string = string,
-        component = component, computer = computer,
+        _G = _G,
+        require = require,
+        os = os,
+        io = io,
+        table = table,
+        math = math,
+        string = string,
+        component = component,
+        computer = computer,
         ngos = _G.ngos
-    }, {__index = _G})
+    }, {
+        __index = _G
+    })
 
     local fn, err = loadfile(path, "t", env)
-    
-    if not fn then return nil, err end
-    
-    local proc = { pid = myPid, routine = coroutine.create(fn), path = path }
+
+    if not fn then
+        return nil, err
+    end
+
+    local proc = {
+        pid = myPid,
+        routine = coroutine.create(fn),
+        path = path
+    }
     table.insert(processes, proc)
     return proc
 end
@@ -143,19 +179,19 @@ gpu.fill(1, 1, w, h, " ")
 
 while true do
     drawOverlay()
-    local eventData = { computer.pullSignal(0.1) }
+    local eventData = {computer.pullSignal(0.1)}
     local ev = eventData[1]
     local handled = false
 
     if ev == "touch" then
         local x, y = eventData[3], eventData[4]
-        
+
         if isTaskSwitcherOpen then
             local boxW = 24
             local boxH = #processes + 2
             local startX = math.floor((w - boxW) / 2)
             local startY = math.floor((h - boxH) / 2)
-            
+
             if x >= startX and x <= startX + boxW and y >= startY and y <= startY + boxH then
                 if y == startY and x >= startX + boxW - 1 then
                     isTaskSwitcherOpen = false
@@ -167,10 +203,12 @@ while true do
                         local proc = processes[row]
                         if x >= startX + boxW - 2 then
                             killProcess(proc)
-                            if #processes == 0 then isTaskSwitcherOpen = false end
+                            if #processes == 0 then
+                                isTaskSwitcherOpen = false
+                            end
                             gpu.setBackground(_G.ngos.theme.bg)
                             gpu.fill(1, 1, w, h, " ")
-                        else 
+                        else
                             isTaskSwitcherOpen = false
                             activeProcess = proc
                             gpu.setBackground(_G.ngos.theme.bg)
@@ -180,31 +218,40 @@ while true do
                 end
                 handled = true
             else
-                isTaskSwitcherOpen = false 
+                isTaskSwitcherOpen = false
                 gpu.setBackground(_G.ngos.theme.bg)
                 gpu.fill(1, 1, w, h, " ")
                 handled = true
             end
-            
+
         elseif y == 1 then
             if x == w and activeProcess then
                 killProcess(activeProcess)
                 gpu.setBackground(_G.ngos.theme.bg)
                 gpu.fill(1, 1, w, h, " ")
+                if desktopRoutine then
+                    coroutine.resume(desktopRoutine, "refresh")
+                end
                 handled = true
-                
-            elseif x == w-1 and activeProcess then
+
+            elseif x == w - 1 and activeProcess then
                 activeProcess = nil
                 gpu.setBackground(_G.ngos.theme.bg)
                 gpu.fill(1, 1, w, h, " ")
+                if desktopRoutine then
+                    coroutine.resume(desktopRoutine, "refresh")
+                end
                 handled = true
-                
-            elseif x == w and not activeProcess and #processes > 0 then
-                isTaskSwitcherOpen = true
-                handled = true
+
+            else
+                isTaskSwitcherOpen = false
+                activeProcess = proc
+                gpu.setBackground(_G.ngos.theme.bg)
+                gpu.fill(1, 1, w, h, " ")
+                coroutine.resume(activeProcess.routine, "refresh")
             end
         end
-        
+
     elseif ev == "ngos_launch" then
         isTaskSwitcherOpen = false
         local proc = launchApp(eventData[2])
@@ -219,7 +266,7 @@ while true do
     if not handled and ev then
         if activeProcess then
             local ok, err = coroutine.resume(activeProcess.routine, table.unpack(eventData))
-            
+
             if not ok or coroutine.status(activeProcess.routine) == "dead" then
                 if not ok then
                     gpu.setBackground(themeLib.colors.err)
