@@ -1,3 +1,5 @@
+_G.unpack = _G.unpack or table.unpack
+
 package.path = package.path .. ";/?.lua;/ngos/system/?.lua;/ngos/lib/?.lua"
 
 local computer = require("computer")
