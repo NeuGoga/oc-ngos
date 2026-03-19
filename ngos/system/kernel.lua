@@ -1,3 +1,5 @@
+package.path = package.path .. ";/?.lua;/ngos/system/?.lua;/ngos/lib/?.lua"
+
 local computer = require("computer")
 local component = require("component")
 local fs = require("filesystem")
