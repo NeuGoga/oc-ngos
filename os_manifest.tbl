@@ -1,0 +1,14 @@
+{
+  version = "0.1.0",
+  files = {
+    ["/ngos/system/kernel.lua"]   = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/system/kernel.lua",
+    ["/ngos/system/security.lua"] = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/system/security.lua",
+    ["/ngos/system/theme.lua"]    = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/system/theme.lua",
+    ["/ngos/lib/sha256.lua"]      = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/lib/sha256.lua",
+    ["/ngos/bin/desktop.lua"]     = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/desktop.lua",
+    ["/ngos/bin/gen_digest.lua"]  = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/gen_digest.lua",
+    ["/ngos/bin/settings.lua"]    = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/settings.lua",
+    ["/ngos/bin/store.lua"]       = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/store.lua",
+    ["/ngos/bin/updater.lua"]     = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/updater.lua"
+  }
+}
