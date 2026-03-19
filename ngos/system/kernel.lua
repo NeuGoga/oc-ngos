@@ -103,16 +103,20 @@ end
 local function loadDesktop()
     local path = "/ngos/bin/desktop.lua"
     if not fs.exists(path) then return nil end
-    local fn, err = loadfile(path)
-    if not fn then return nil end
-    setfenv(fn, setmetatable({ _G = _G }, {__index = _G}))
+    
+    local env = setmetatable({ _G = _G }, {__index = _G})
+    
+    local fn, err = loadfile(path, "t", env)
+    
+    if not fn then 
+        gpu.set(1, 20, "Load Error: " .. tostring(err))
+        return nil 
+    end
+    
     return coroutine.create(fn)
 end
 
 local function launchApp(path)
-    local fn, err = loadfile(path)
-    if not fn then return nil, err end
-    
     local myPid = pidCounter
     pidCounter = pidCounter + 1
 
@@ -122,7 +126,10 @@ local function launchApp(path)
         component = component, computer = computer,
         ngos = _G.ngos
     }, {__index = _G})
-    setfenv(fn, env)
+
+    local fn, err = loadfile(path, "t", env)
+    
+    if not fn then return nil, err end
     
     local proc = { pid = myPid, routine = coroutine.create(fn), path = path }
     table.insert(processes, proc)
