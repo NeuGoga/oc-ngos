@@ -46,13 +46,13 @@ local function getAppName(path)
     for part in path:gmatch("[^/]+") do
         table.insert(parts, part)
     end
-    
+
     local fileName = parts[#parts] or "Unknown"
-    
+
     if fileName == "app.lua" and #parts >= 2 then
-        return parts[#parts-1]
+        return parts[#parts - 1]
     end
-    
+
     return fileName:gsub("%.lua$", "")
 end
 
@@ -213,6 +213,7 @@ while true do
                             activeProcess = proc
                             gpu.setBackground(_G.ngos.theme.bg)
                             gpu.fill(1, 1, w, h, " ")
+                            coroutine.resume(activeProcess.routine, "refresh")
                         end
                     end
                 end
@@ -243,12 +244,9 @@ while true do
                 end
                 handled = true
 
-            else
-                isTaskSwitcherOpen = false
-                activeProcess = proc
-                gpu.setBackground(_G.ngos.theme.bg)
-                gpu.fill(1, 1, w, h, " ")
-                coroutine.resume(activeProcess.routine, "refresh")
+            elseif x == w and not activeProcess and #processes > 0 then
+                isTaskSwitcherOpen = true
+                handled = true
             end
         end
 
