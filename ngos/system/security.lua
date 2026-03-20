@@ -53,6 +53,33 @@ local function drawBox(title, message, isError)
     return bx+2, by+4
 end
 
+local function readPassword(x, y)
+    local input = ""
+    while true do
+        gpu.setBackground(0x000000)
+        gpu.setForeground(0xFFFFFF)
+        gpu.set(x, y, string.rep("*", #input) .. "  ")
+        
+        local evData = { computer.pullSignal() }
+        if evData[1] == "key_down" then
+            local char = evData[3]
+            local code = evData[4]
+            
+            if code == 28 then
+                return input
+            elseif code == 14 then
+                if #input > 0 then
+                    input = input:sub(1, -2)
+                end
+            elseif char >= 32 and char <= 126 then
+                if #input < 20 then
+                    input = input .. string.char(char)
+                end
+            end
+        end
+    end
+end
+
 function security.isEnabled()
     local cfg = loadConfig()
     return cfg.enabled
@@ -143,7 +170,7 @@ function security.bootLogin()
         local ix, iy = drawBox("Protected Boot", "Enter Password:", false)
         term.setCursor(ix, iy)
         
-        local input = term.read({pwChar="*"}):gsub("\n", "")
+        local input = readPassword(ix, iy)
         
         if sha256.hex(input) == cfg.hash then
             return true
@@ -160,11 +187,11 @@ function security.enableProtection()
     while true do
         local ix, iy = drawBox("Security Setup", "Create Password:", false)
         term.setCursor(ix, iy)
-        local p1 = term.read({pwChar="*"}):gsub("\n", "")
+        local p1 = readPassword(ix, iy)
         
         local ix2, iy2 = drawBox("Security Setup", "Confirm Password:", false)
         term.setCursor(ix2, iy2)
-        local p2 = term.read({pwChar="*"}):gsub("\n", "")
+        local p2 = readPassword(ix2, iy2)
         
         if p1 == p2 and #p1 > 0 then
             cfg.hash = sha256.hex(p1)
@@ -188,7 +215,7 @@ function security.disableProtection()
     while attempts < 3 do
         local ix, iy = drawBox("Security Check", "Enter current password:", false)
         term.setCursor(ix, iy)
-        local input = term.read({pwChar="*"}):gsub("\n", "")
+        local input = readPassword(ix, iy)
         
         if sha256.hex(input) == cfg.hash then
             cfg.enabled = false

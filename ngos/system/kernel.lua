@@ -206,7 +206,7 @@ while true do
                     gpu.setBackground(_G.ngos.theme.bg)
                     gpu.fill(1, 1, w, h, " ")
                     if activeProcess then coroutine.resume(activeProcess.routine, "refresh")
-                    elseif desktopRoutine then coroutine.resume(desktopRoutine.routine, "refresh") end
+                    elseif desktopRoutine then coroutine.resume(desktopRoutine, "refresh") end
                 else
                     local row = y - startY
                     if row > 0 and row <= #processes then
@@ -220,7 +220,7 @@ while true do
                             gpu.fill(1, 1, w, h, " ")
 
                             if activeProcess then coroutine.resume(activeProcess.routine, "refresh")
-                            elseif desktopRoutine then coroutine.resume(desktopRoutine.routine, "refresh") end
+                            elseif desktopRoutine then coroutine.resume(desktopRoutine, "refresh") end
                         else
                             isTaskSwitcherOpen = false
                             activeProcess = proc
@@ -237,8 +237,8 @@ while true do
                 gpu.fill(1, 1, w, h, " ")
 
                 if activeProcess then coroutine.resume(activeProcess.routine, "refresh")
-                elseif desktopRoutine then coroutine.resume(desktopRoutine.routine, "refresh") end
-                
+                elseif desktopRoutine then coroutine.resume(desktopRoutine, "refresh") end
+
                 handled = true
             end
 
