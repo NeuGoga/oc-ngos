@@ -9,7 +9,7 @@ local w, h = gpu.getResolution()
 
 local T = _G.ngos.theme
 
-local STORE_MANIFEST_URL = "placeholder"
+local STORE_MANIFEST_URL = "https://raw.githubusercontent.com/NeuGoga/oc-ngos-apps/main/apps.tbl"
 
 
 local apps = {}

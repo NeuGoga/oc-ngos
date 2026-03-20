@@ -94,59 +94,46 @@ function security.checkIntegrity()
     
     gpu.setForeground(0xFFFFFF)
     print("NgOS Boot Guard")
-    print("Verifying System Integrity...")
+    print("Verifying System Signatures...")
     
-    if not fs.exists(DIGEST_FILE) then
+    if not fs.exists("/etc/signatures.tbl") or not fs.exists("/etc/system.digest") then
         gpu.setForeground(0xFFAA00)
-        print("System Digest missing.")
-        print("Initializing security...")
-        
+        print("Signatures or Digest missing.")
+        print("Generating local digest...")
         if fs.exists("/ngos/bin/gen_digest.lua") then
             dofile("/ngos/bin/gen_digest.lua")
             os.sleep(1)
-            
-            gpu.setBackground(0x000000)
-            gpu.fill(1, 1, w, h, " ")
-            term.setCursor(1,1)
-            gpu.setForeground(0xFFFFFF)
-            print("NgOS Boot Guard")
         else
-            gpu.setForeground(0xFF0000)
-            print("Error: Generator not found.")
-            os.sleep(2)
             return true
         end
     end
     
-    local f = io.open(DIGEST_FILE, "r")
-    local knownHashes = serialization.unserialize(f:read("*a"))
-    f:close()
+    local fSig = io.open("/etc/signatures.tbl", "r")
+    local signatures = fSig and serialization.unserialize(fSig:read("*a")) or {}
+    if fSig then fSig:close() end
+    
+    local fDig = io.open("/etc/system.digest", "r")
+    local digest = fDig and serialization.unserialize(fDig:read("*a")) or {}
+    if fDig then fDig:close() end
     
     local errors = 0
     
-    for path, expectedHash in pairs(knownHashes) do
+    for path, expectedHash in pairs(signatures) do
         io.write(" " .. fs.name(path) .. " ")
         
-        if not fs.exists(path) then
+        local localHash = digest[path]
+        
+        if not localHash then
             gpu.setForeground(0xFF0000)
-            print("[MISSING]")
+            print("[MISSING IN DIGEST]")
             errors = errors + 1
+        elseif localHash == expectedHash then
+            gpu.setForeground(0x00FF00)
+            print("[OK]")
         else
-            local f2 = io.open(path, "rb")
-            local content = f2:read("*a")
-            f2:close()
-            
-            local cleanContent = content:gsub("\r", "")
-            local actualHash = sha256.hex(cleanContent)
-            
-            if actualHash == expectedHash then
-                gpu.setForeground(0x00FF00)
-                print("[OK]")
-            else
-                gpu.setForeground(0xFF0000)
-                print("[MODIFIED]")
-                errors = errors + 1
-            end
+            gpu.setForeground(0xFF0000)
+            print("[MODIFIED/MISMATCH]")
+            errors = errors + 1
         end
         gpu.setForeground(0xFFFFFF)
     end

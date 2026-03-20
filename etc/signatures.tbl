@@ -1,0 +1,12 @@
+{
+    ["/ngos/lib/sha256.lua"]="398b0bf5c5c64fc05ae7dd69a56a9ee32dfc71c0b76b697c7408e74ada050025",
+    ["/ngos/bin/updater.lua"]="f1ad44032209331ff36c378b426851ff4d479085bdcff093e1f71f956151c0c0",
+    ["/home/.shrc"]="ac59151afd33ffa1904158947d074d25ab91143facb1c8f0362dadfadd72a4f0",
+    ["/ngos/system/security.lua"]="23087269d8603ee7e5125bfb4d5e54b621bbc51e565e15cad5def9426a24cdff",
+    ["/ngos/bin/store.lua"]="ddff8c859dfcfefaae2eb297d89488bcd902f5848e9c1d5973958a6cbbe0c61e",
+    ["/ngos/bin/gen_digest.lua"]="63a3819e4c7b33e5339c7661254d8e844d03b2b22f2003eb9ec91ca62f49bedc",
+    ["/ngos/bin/settings.lua"]="c8a8998f2b77aaa6c36779e4544703844566a9c6bece6c7a8810ebee809c04fe",
+    ["/ngos/system/kernel.lua"]="b5af1d126af350ab36dc8d7a53608fcafad3f0851835b50b4c9ba2d0407b5841",
+    ["/ngos/system/theme.lua"]="cc5ae6bfa7095e6479a033d62b5df86e0db9b65edc4665fc51cb4b75f8f1ed53",
+    ["/ngos/bin/desktop.lua"]="3ef8baebd33e488387d824af701cf684569b5367519d688b842678de6be10d1c"
+}
