@@ -9,7 +9,7 @@
     ["/ngos/bin/gen_digest.lua"]  = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/gen_digest.lua",
     ["/ngos/bin/settings.lua"]    = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/settings.lua",
     ["/ngos/bin/store.lua"]       = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/store.lua",
-    ["/ngos/bin/updater.lua"]     = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/updater.lua"
+    ["/ngos/bin/updater.lua"]     = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/bin/updater.lua",
     ["/etc/signatures.tbl"]       = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/etc/signatures.tbl"
   }
 }
