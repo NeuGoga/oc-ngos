@@ -1,5 +1,6 @@
 local fs = require("filesystem")
 local serialization = require("serialization")
+local computer = require("computer")
 local component = require("component")
 local term = require("term")
 
