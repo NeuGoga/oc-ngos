@@ -178,6 +178,13 @@ desktopRoutine = loadDesktop()
 gpu.setBackground(_G.ngos.theme.bg)
 gpu.fill(1, 1, w, h, " ")
 
+if desktopRoutine then
+    local ok, err = coroutine.resume(desktopRoutine)
+    if not ok then
+        gpu.set(1, 1, "Desktop Error: " .. tostring(err))
+    end
+end
+
 while true do
     drawOverlay()
     local eventData = {computer.pullSignal(0.1)}
@@ -258,6 +265,21 @@ while true do
             activeProcess = proc
             gpu.setBackground(_G.ngos.theme.bg)
             gpu.fill(1, 1, w, h, " ")
+            
+            local ok, err = coroutine.resume(activeProcess.routine)
+            if not ok then
+                gpu.setBackground(_G.ngos.theme.err)
+                gpu.fill(1, 1, w, h, " ")
+                gpu.setForeground(_G.ngos.theme.white)
+                gpu.set(1, 1, "Launch Error: " .. tostring(err))
+                os.sleep(3)
+                killProcess(activeProcess)
+                gpu.setBackground(_G.ngos.theme.bg)
+                gpu.fill(1, 1, w, h, " ")
+                if desktopRoutine then
+                    coroutine.resume(desktopRoutine, "refresh")
+                end
+            end
         end
         handled = true
     end
@@ -277,6 +299,9 @@ while true do
                 killProcess(activeProcess)
                 gpu.setBackground(_G.ngos.theme.bg)
                 gpu.fill(1, 1, w, h, " ")
+                if desktopRoutine then
+                    coroutine.resume(desktopRoutine, "refresh")
+                end
             end
         else
             if desktopRoutine then
