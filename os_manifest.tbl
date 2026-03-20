@@ -1,5 +1,5 @@
 {
-  version = "1.0.0",
+  version = "1.0.1",
   files = {
     ["/ngos/system/kernel.lua"]   = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/system/kernel.lua",
     ["/ngos/system/security.lua"] = "https://raw.githubusercontent.com/NeuGoga/oc-ngos/main/ngos/system/security.lua",

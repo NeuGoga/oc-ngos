@@ -40,18 +40,6 @@ local function loadApps()
             return
         end
     end
-    
-    statusMessage = "Could not connect. Loading offline template."
-    apps = {
-        {
-            name = "Free Wifi",
-            description = "everywhere",
-            version = "1.0",
-            files = {
-                ["/apps/Free-WIFI/app.lua"] = "everywhere"
-            }
-        }
-    }
 end
 
 local function installApp(app)

@@ -39,7 +39,7 @@ for _, path in ipairs(criticalFiles) do
         local content = f:read("*a")
         f:close()
         
-        local cleanContent = content:gsub("\r", "")
+        local cleanContent = content:gsub("\r", ""):gsub("%s+$", "")
         digest[path] = sha256.hex(cleanContent)
         
         gpu.setForeground(0x00FF00)
