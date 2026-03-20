@@ -83,7 +83,7 @@ local function draw()
     local nx = 11
     nx = drawButton(nx, 10, "Dark", currentStyle == "dark", function() changeTheme("dark", currentQuality) end)
     nx = drawButton(nx, 10, "Light", currentStyle == "light", function() changeTheme("light", currentQuality) end)
-    drawButton(nx, 10, "Ocean", currentStyle == "ocean", function() changeTheme("ocean", currentQuality) end)
+    drawButton(nx, 10, "Hacker", currentStyle == "hacker", function() changeTheme("hacker", currentQuality) end)
     
     gpu.setBackground(T.bg)
     gpu.setForeground(T.text)
